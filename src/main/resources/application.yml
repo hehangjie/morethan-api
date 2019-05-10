@@ -1,0 +1,39 @@
+server:
+  servlet:
+    context-path: /
+    session:
+      timeout: 1800
+  tomcat:
+    max-threads: 1000
+    min-spare-threads: 30
+    uri-encoding: utf-8
+  port: 8081
+spring:
+  thymeleaf:
+    cache: false
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  profiles:
+    active: '@profiles.active@'
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*Mapper.xml
+  typeAliasesPackage: com.morethan.game.entity
+  global-config:
+    id-type: 0
+    field-strategy: 2
+    db-column-underline: true
+    refresh-mapper: true
+    capital-mode: true
+    logic-delete-value: 0
+    logic-not-delete-value: 1
+    sql-injector: com.baomidou.mybatisplus.mapper.LogicSqlInjector
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+env:
+  needSign: true
