@@ -6,7 +6,7 @@ spring:
   datasource:
     druid:
       driverClassName: com.mysql.jdbc.Driver
-      url: jdbc:mysql://rm-wz9qks8d46br75v11ro.mysql.rds.aliyuncs.com:3306/cr-game-test?useUnicode=true&characterEncoding=utf8&useSSL=false
+      url: jdbc:mysql://127.0.0.1:3306/xxxx?useUnicode=true&characterEncoding=utf8&useSSL=false
       username: root
       password: 678^&*yui
       initial-size: 1
@@ -93,7 +93,7 @@ spring:
       aop-patterns: com.morethan.game.service.*
   redis:
     database: 0
-    host: 119.23.30.213
+    host: 127.0.0.1
     port: 6379
     password: crnet@2018
     jedis:
