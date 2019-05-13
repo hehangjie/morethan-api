@@ -51,7 +51,7 @@ public class RoundController {
             return Result.fail("无效的游戏ID");
         }
 
-        if(bet.getBetList().size() > 1) {
+        if(bet.getBetList().size() < 1) {
             return Result.fail("用户没有下注");
         }
 
