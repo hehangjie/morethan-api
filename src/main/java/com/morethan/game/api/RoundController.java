@@ -38,7 +38,7 @@ public class RoundController {
     private SevenService sevenService;
 
     @UnAuthorization
-    @GetMapping("new")
+    @PostMapping("new")
     @ApiOperation(value = "新游戏开局")
     public Result<Map> newRound(HttpServletRequest request, @RequestBody Bet bet) {
 
