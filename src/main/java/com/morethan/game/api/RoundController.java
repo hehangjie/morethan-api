@@ -47,6 +47,10 @@ public class RoundController {
             return Result.fail("无效token");
         }
 
+        if(bet.getGameId() != 10777){
+            return Result.fail("无效的游戏ID");
+        }
+
         if(bet.getBetList().size() > 1) {
             return Result.fail("用户没有下注");
         }
