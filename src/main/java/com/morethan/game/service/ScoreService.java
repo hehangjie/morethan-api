@@ -7,8 +7,11 @@ import com.morethan.game.entity.Score;
 import com.morethan.game.mapper.RecordMapper;
 import com.morethan.game.mapper.ScoreMapper;
 import com.morethan.game.utils.DateUtil;
+import com.morethan.game.utils.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 描述:
@@ -36,7 +39,8 @@ public class ScoreService extends ServiceImpl<ScoreMapper, Score> {
         Score score = new Score();
         score.setPlayerId(playerId);
         score.setEntryAmount(amount);
-        score.setEntryTime(DateUtil.getCurrentTime());
+        score.setApiEntryTime(DateUtil.getCurrentTime());
+        score.setGameEntryToken(TokenUtil.getToken(playerId));
         return insert(score);
     }
 
@@ -66,5 +70,14 @@ public class ScoreService extends ServiceImpl<ScoreMapper, Score> {
         return true;
     }
 
+    public List<Score> listNoExit(){
+        return scoreMapper.listNoExit();
+    }
+
+    public List<Score> listNoGameEntry(){
+        return scoreMapper.listNoGameEnter();
+    }
+
+    public Score whichOneByToken(String token) {return scoreMapper.whichOneByToken(token);}
 }
 

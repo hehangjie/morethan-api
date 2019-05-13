@@ -1,11 +1,14 @@
 package com.morethan.game.mapper;
 
+import com.morethan.game.entity.Score;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.morethan.game.entity.Player;
+
+import java.util.List;
 
 /**
  * PlayerMapper
@@ -19,5 +22,8 @@ import com.morethan.game.entity.Player;
  * @Version: 1.0
  */
 public interface PlayerMapper extends BaseMapper<Player>{
+
+    @Select("SELECT player_id FROM t_player WHERE player_id NOT IN (SELECT player_id FROM t_score WHERE exit_time is null) LIMIT 0,5")
+    List<Player> listNoGamePlayer();
 
 }

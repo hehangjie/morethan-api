@@ -11,7 +11,7 @@ public class Lottery {
 
     private String title;
     private String type;
-    private String[] items;
+    private Integer[] items;
 
     public String getTitle() {
         return title;
@@ -21,11 +21,11 @@ public class Lottery {
         this.title = title;
     }
 
-    public String[] getItems() {
+    public Integer[] getItems() {
         return items;
     }
 
-    public void setItems(String[] items) {
+    public void setItems(Integer[] items) {
         this.items = items;
     }
 

@@ -42,8 +42,17 @@ public class RoundController {
     @ApiOperation(value = "新游戏开局")
     public Result<Map> newRound(HttpServletRequest request, @RequestBody Bet bet) {
 
+        Player player = (Player) request.getAttribute("player");
+        if(player == null) {
+            return Result.fail("无效token");
+        }
+
+        if(bet.getBetList().size() > 1) {
+            return Result.fail("用户没有下注");
+        }
+
         Map<String, Object> resultMap = new HashedMap();
-        Lottery lottery = sevenService.deal();
+        Lottery lottery = sevenService.deal(bet);
         resultMap.put("lottery", lottery);
         return Result.ok(resultMap);
     }

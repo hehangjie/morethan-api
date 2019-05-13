@@ -21,10 +21,12 @@ public class Score implements Serializable {
     @TableId
     private Long scoreId;
     private Long playerId;
-    private String entryTime;
+    private String apiEntryTime;
     private String exitTime;
     private Double entryAmount;
     private Double exitAmount;
+    private String gameEntryTime;
+    private String gameEntryToken;
 
     public Long getScoreId() {
         return scoreId;
@@ -42,13 +44,6 @@ public class Score implements Serializable {
         this.playerId = playerId;
     }
 
-    public String getEntryTime() {
-        return entryTime;
-    }
-
-    public void setEntryTime(String entryTime) {
-        this.entryTime = entryTime;
-    }
 
     public String getExitTime() {
         return exitTime;
@@ -72,6 +67,30 @@ public class Score implements Serializable {
 
     public void setExitAmount(Double exitAmount) {
         this.exitAmount = exitAmount;
+    }
+
+    public String getApiEntryTime() {
+        return apiEntryTime;
+    }
+
+    public void setApiEntryTime(String apiEntryTime) {
+        this.apiEntryTime = apiEntryTime;
+    }
+
+    public String getGameEntryTime() {
+        return gameEntryTime;
+    }
+
+    public void setGameEntryTime(String gameEntryTime) {
+        this.gameEntryTime = gameEntryTime;
+    }
+
+    public String getGameEntryToken() {
+        return gameEntryToken;
+    }
+
+    public void setGameEntryToken(String gameEntryToken) {
+        this.gameEntryToken = gameEntryToken;
     }
 }
 

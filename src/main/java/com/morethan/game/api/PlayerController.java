@@ -39,12 +39,13 @@ public class PlayerController {
     @GetMapping("info")
     @ApiOperation(value = "获取用户信息")
     public Result<Map> info(HttpServletRequest request) {
-
-        Player player = playerService.whichOne(1L);
+        Player player = (Player) request.getAttribute("player");
+        if(player == null) {
+            return Result.fail("无效token");
+        }
         Map<String, Object> resultMap = new HashedMap();
         resultMap.put("player", player);
         return Result.ok(resultMap);
-
     }
 
 }

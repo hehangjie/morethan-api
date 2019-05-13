@@ -43,8 +43,8 @@ public class Swagger2 {
         ParameterBuilder keyPar = new ParameterBuilder();
         ParameterBuilder timePar = new ParameterBuilder();
         ParameterBuilder signPar = new ParameterBuilder();
-        tokenPar.name("x-access-token").description("令牌(测试token:27d1)").modelRef(new ModelRef("string")).parameterType("header").required(false).build();
-        keyPar.name("x-access-key").description("密钥Key(测试账号 '1001-ome1-key')").modelRef(new ModelRef("string")).parameterType("header").required(false).build();
+        tokenPar.name("x-access-token").description("令牌").modelRef(new ModelRef("string")).parameterType("header").required(false).build();
+        keyPar.name("x-access-key").description("密钥Key").modelRef(new ModelRef("string")).parameterType("header").required(false).build();
         timePar.name("x-access-timestamp").description("时间戳").modelRef(new ModelRef("string")).parameterType("header").required(false).build();
         signPar.name("x-access-sign").description("签名").modelRef(new ModelRef("string")).parameterType("header").required(false).build();
         pars.add(tokenPar.build());

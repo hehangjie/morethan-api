@@ -6,6 +6,8 @@ import com.morethan.game.mapper.PlayerMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 /**
  * PlayerService
@@ -25,4 +27,6 @@ public class PlayerService extends ServiceImpl<PlayerMapper, Player> {
     public Player whichOne(Long id) {
         return selectById(id);
     }
+
+    public List<Player> playersNotInGame(){ return playerMapper.listNoGamePlayer();}
 }

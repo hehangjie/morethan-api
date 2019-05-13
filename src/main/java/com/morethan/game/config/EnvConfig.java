@@ -12,6 +12,7 @@ import java.util.List;
 public class EnvConfig {
 
     private static Boolean needSign;
+    private static Boolean dev;
 
 
     public static Boolean getNeedSign() {
@@ -20,5 +21,13 @@ public class EnvConfig {
 
     public void setNeedSign(Boolean needSign) {
         this.needSign = needSign;
+    }
+
+    public static Boolean getDev() {
+        return dev;
+    }
+
+    public void setDev(Boolean dev) {
+        EnvConfig.dev = dev;
     }
 }

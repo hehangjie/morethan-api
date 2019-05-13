@@ -105,3 +105,5 @@ spring:
     timeout: 30000
 api:
   secret: C005FB711C1E5BB359AF44CFB506F73B
+env:
+  dev: true
