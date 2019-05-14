@@ -12,6 +12,9 @@ public class Lottery {
     private String title;
     private String type;
     private Integer[] items;
+    private Double amount;
+    private Double betAmount;
+    private Double lotteryAmount;
 
     public String getTitle() {
         return title;
@@ -35,6 +38,30 @@ public class Lottery {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public Double getBetAmount() {
+        return betAmount;
+    }
+
+    public void setBetAmount(Double betAmount) {
+        this.betAmount = betAmount;
+    }
+
+    public Double getLotteryAmount() {
+        return lotteryAmount;
+    }
+
+    public void setLotteryAmount(Double lotteryAmount) {
+        this.lotteryAmount = lotteryAmount;
     }
 }
 

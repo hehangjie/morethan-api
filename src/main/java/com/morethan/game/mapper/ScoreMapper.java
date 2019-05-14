@@ -18,7 +18,7 @@ public interface ScoreMapper  extends BaseMapper<Score> {
     @Select("SELECT score_id, player_id, api_entry_time, entry_amount, game_entry_token FROM t_score WHERE game_entry_time IS null")
     List<Score> listNoGameEnter();
 
-    @Select("SELECT score_id, player_id, exit_amount, exit_time FROM t_score WHERE game_entry_token = #{token}")
+    @Select("SELECT score_id, player_id, exit_amount, exit_time, game_entry_time FROM t_score WHERE game_entry_token = #{token}")
     Score whichOneByToken(@Param("token")String token);
 
 }

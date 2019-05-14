@@ -1,32 +1,22 @@
 package com.morethan.game.dto;
 
-import java.util.List;
-import java.util.Map;
-
-/**
- * 描述:
- *
- * @outhor anthony
- * @create 2019-05-07 下午4:46
- */
 public class Bet {
-    private Integer gameId;
-    private List<Map<String, Double>> betList;
+    private String title;
+    private Double amount;
 
-    public List<Map<String, Double>> getBetList() {
-        return betList;
+    public String getTitle() {
+        return title;
     }
 
-    public void setBetList(List<Map<String, Double>> betList) {
-        this.betList = betList;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public Integer getGameId() {
-        return gameId;
+    public Double getAmount() {
+        return amount;
     }
 
-    public void setGameId(Integer gameId) {
-        this.gameId = gameId;
+    public void setAmount(Double amount) {
+        this.amount = amount;
     }
 }
-

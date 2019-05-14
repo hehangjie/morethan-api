@@ -3,6 +3,7 @@ package com.morethan.game.entity;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.annotations.Version;
 import com.morethan.game.common.Constant;
 import com.morethan.game.utils.DateUtil;
 import org.apache.commons.lang.RandomStringUtils;
@@ -28,6 +29,8 @@ public class Player implements Serializable {
     private String playerName;
     private Double experience;
     private String headImg;
+    @Version
+    private Integer version;
 
     public Long getPlayerId() {
         return playerId;
@@ -59,5 +62,13 @@ public class Player implements Serializable {
 
     public void setHeadImg(String headImg) {
         this.headImg = headImg;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 }

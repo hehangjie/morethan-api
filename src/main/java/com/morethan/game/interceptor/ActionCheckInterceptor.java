@@ -47,6 +47,7 @@ public class ActionCheckInterceptor implements HandlerInterceptor {
                 Player player = playerService.whichOne(score.getPlayerId());
                 if (null != player) {
                     req.setAttribute("player", player);
+                    req.setAttribute("score", score);
                 }
             }
         }

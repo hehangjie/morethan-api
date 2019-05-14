@@ -23,7 +23,7 @@ import java.util.List;
  */
 public interface PlayerMapper extends BaseMapper<Player>{
 
-    @Select("SELECT player_id FROM t_player WHERE player_id NOT IN (SELECT player_id FROM t_score WHERE exit_time is null) LIMIT 0,5")
+    @Select("SELECT player_id, experience FROM t_player WHERE player_id NOT IN (SELECT player_id FROM t_score WHERE exit_time is null) LIMIT 0,5")
     List<Player> listNoGamePlayer();
 
 }

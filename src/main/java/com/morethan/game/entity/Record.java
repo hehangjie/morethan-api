@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @outhor anthony
  * @create 2019-05-08 下午6:25
  */
-@TableName("t_score")
+@TableName("t_record")
 public class Record implements Serializable {
 
     @TableField(exist = false)
@@ -25,7 +25,7 @@ public class Record implements Serializable {
     private String recordTime;
     private Double amount;
     private String bet;
-    private Integer scoreId;
+    private Long scoreId;
     private Boolean dominate;
 
     public Long getRecordId() {
@@ -76,11 +76,11 @@ public class Record implements Serializable {
         this.bet = bet;
     }
 
-    public Integer getScoreId() {
+    public Long getScoreId() {
         return scoreId;
     }
 
-    public void setScoreId(Integer scoreId) {
+    public void setScoreId(Long scoreId) {
         this.scoreId = scoreId;
     }
 

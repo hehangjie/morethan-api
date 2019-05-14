@@ -46,7 +46,7 @@ public class EnterController {
     public Result<Map> quitGame(HttpServletRequest request) {
         if(EnvConfig.getDev()){
             List<Score> noEnterGame = scoreService.listNoGameEntry();
-            if(noEnterGame.size() < 1) {
+            if(noEnterGame.size() < 5) {
                 List<Player> players = playerService.playersNotInGame();
                 for (Player player : players) {
                     scoreService.entryScore(player.getPlayerId(), player.getExperience());
