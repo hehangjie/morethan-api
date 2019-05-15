@@ -1,6 +1,5 @@
 package com.morethan.game.api;
 
-import com.alibaba.fastjson.JSONObject;
 import com.morethan.game.authorization.UnAuthorization;
 import com.morethan.game.dto.Bet;
 import com.morethan.game.dto.RequestBet;
@@ -16,7 +15,11 @@ import com.morethan.game.service.game.SevenService;
 import com.morethan.game.utils.DateUtil;
 import com.morethan.game.utils.RedisUtil;
 import io.swagger.annotations.ApiOperation;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -59,7 +64,7 @@ public class RoundController {
     @PostMapping("new")
     @ApiOperation(value = "新游戏开局")
     @Transactional
-    public Result<Map> newRound(HttpServletRequest request, @RequestBody RequestBet bet) {
+    public Result<Map> newRound(HttpServletRequest request, @RequestParam Integer gameId, @RequestParam String bets) {
 
         Player player = (Player) request.getAttribute("player");
         Score score = (Score) request.getAttribute("score");
@@ -68,16 +73,25 @@ public class RoundController {
             return Result.fail("无效token");
         }
 
-        if (bet.getGameId() != 10777) {
+        List<Bet> betList = new ArrayList<>();
+        try {
+
+            JSONArray array = JSONArray.fromObject(bets);
+            betList = JSONArray.toList(array,new Bet(), new JsonConfig());
+        } catch (Exception ex) {
+            return Result.fail("bet对象转换错误");
+        }
+
+        if (gameId != 10777) {
             return Result.fail("无效的游戏ID");
         }
 
-        if (bet.getBetList().size() < 1) {
+        if (betList.size() < 1) {
             return Result.fail("用户没有下注");
         }
 
         double totalBet = 0.0;
-        for (Bet b : bet.getBetList()) {
+        for (Bet b : betList) {
             if (b.getAmount() < 0.1) {
                 return Result.fail("无效投注额:" + b.getAmount());
             }
@@ -103,14 +117,14 @@ public class RoundController {
         try {
 
             //开奖
-            Lottery lottery = sevenService.deal(false, bet.getBetList());
+            Lottery lottery = sevenService.deal(false, betList);
 
             //插入记录
             Record record = new Record();
             record.setPlayerId(player.getPlayerId());
             record.setBeginTime(DateUtil.getCurrentTime());
             record.setAmount(lottery.getAmount());
-            record.setBet(JSONObject.toJSONString(bet.getBetList()));
+            record.setBet(bets);
             record.setScoreId(score.getScoreId());
             record.setDominate(false);
             recordService.insert(record);
@@ -119,7 +133,7 @@ public class RoundController {
             //刷新用户余额
             player.setExperience(BigDecimal.valueOf(player.getExperience()).add(BigDecimal.valueOf(lottery.getAmount())).doubleValue());
             boolean isUpdate = playerService.updateById(player);
-            if(!isUpdate){
+            if (!isUpdate) {
                 throw new Exception("乐观锁更新失败");
             }
             resultMap.put("experience", player.getExperience());
