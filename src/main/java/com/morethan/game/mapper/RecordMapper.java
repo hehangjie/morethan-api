@@ -10,4 +10,6 @@ public interface RecordMapper extends BaseMapper<Record> {
     @Select("SELECT sum(amount) FROM t_record WHERE score_id = #{scoreId}")
     Double sumScoreAmount(@Param("scoreId") Long scoreId);
 
+    @Select("SELECT count(record_id) FROM t_record WHERE score_id = #{scoreId}")
+    Integer countRecord(@Param("scoreId") Long scoreId);
 }

@@ -13,13 +13,12 @@ import com.morethan.game.service.RecordService;
 import com.morethan.game.service.ScoreService;
 import com.morethan.game.service.game.SevenService;
 import com.morethan.game.utils.DateUtil;
+import com.morethan.game.utils.DominateUtil;
 import com.morethan.game.utils.RedisUtil;
 import io.swagger.annotations.ApiOperation;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import org.apache.commons.collections.map.HashedMap;
-import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +64,7 @@ public class RoundController {
     @ApiOperation(value = "新游戏开局")
     @Transactional
     public Result<Map> newRound(HttpServletRequest request, @RequestParam Integer gameId, @RequestParam String bets) {
-
+        //[{"title":"apple","amount":0.8},{"title":"seven","amount":0.2}]
         Player player = (Player) request.getAttribute("player");
         Score score = (Score) request.getAttribute("score");
 
@@ -75,7 +74,6 @@ public class RoundController {
 
         List<Bet> betList = new ArrayList<>();
         try {
-
             JSONArray array = JSONArray.fromObject(bets);
             betList = JSONArray.toList(array,new Bet(), new JsonConfig());
         } catch (Exception ex) {
@@ -114,10 +112,21 @@ public class RoundController {
         }
 
         Map<String, Object> resultMap = new HashedMap();
+        boolean dominate = false;
+
+        Double roundAmount = recordService.sumRecordByScore(score.getScoreId());
+        if (roundAmount > 1000) {
+            dominate = DominateUtil.threeQuartersDominate();
+        } else if (roundAmount < -200) {
+            dominate = false;
+        } else {
+            dominate = DominateUtil.halfDominate();
+        }
+
         try {
 
             //开奖
-            Lottery lottery = sevenService.deal(false, betList);
+            Lottery lottery = sevenService.loopDeal(dominate, betList);
 
             //插入记录
             Record record = new Record();
@@ -126,7 +135,8 @@ public class RoundController {
             record.setAmount(lottery.getAmount());
             record.setBet(bets);
             record.setScoreId(score.getScoreId());
-            record.setDominate(false);
+            record.setDominate(dominate);
+            record.setBetAmount(lottery.getBetAmount());
             recordService.insert(record);
             resultMap.put("lottery", lottery);
 
@@ -137,6 +147,7 @@ public class RoundController {
                 throw new Exception("乐观锁更新失败");
             }
             resultMap.put("experience", player.getExperience());
+            resultMap.put("dominate", dominate);
 
         } catch (Exception e) {
             logger.error(e.getStackTrace().toString());
@@ -145,13 +156,5 @@ public class RoundController {
 
         return Result.ok(resultMap);
     }
-
-    @UnAuthorization
-    @PostMapping("record")
-    @ApiOperation(value = "游戏结算")
-    public Result<Map> recordRound(HttpServletRequest request, @RequestBody RequestBet bet) {
-        return Result.ok();
-    }
-
 
 }

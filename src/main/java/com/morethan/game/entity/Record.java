@@ -27,6 +27,7 @@ public class Record implements Serializable {
     private String bet;
     private Long scoreId;
     private Boolean dominate;
+    private Double betAmount;
 
     public Long getRecordId() {
         return recordId;
@@ -90,6 +91,14 @@ public class Record implements Serializable {
 
     public void setDominate(Boolean dominate) {
         this.dominate = dominate;
+    }
+
+    public Double getBetAmount() {
+        return betAmount;
+    }
+
+    public void setBetAmount(Double betAmount) {
+        this.betAmount = betAmount;
     }
 }
 

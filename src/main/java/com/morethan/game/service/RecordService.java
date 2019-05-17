@@ -36,5 +36,13 @@ public class RecordService extends ServiceImpl<RecordMapper, Record> {
         return null;
     }
 
+    public Integer countRecordByScore(Long scoreId) {
+        return recordMapper.countRecord(scoreId);
+    }
+
+    public Double sumRecordByScore(Long scoreId){
+        return recordMapper.sumScoreAmount(scoreId);
+    }
+
 }
 
