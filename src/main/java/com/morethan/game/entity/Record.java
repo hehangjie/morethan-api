@@ -3,6 +3,7 @@ package com.morethan.game.entity;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.enums.IdType;
 
 import java.io.Serializable;
 
@@ -18,10 +19,9 @@ public class Record implements Serializable {
     @TableField(exist = false)
     private static final long serialVersionUID = 8611315895915302288L;
 
-    @TableId
-    private Long recordId;
+    @TableId(type = IdType.INPUT)
+    private String recordId;
     private Long playerId;
-    private String beginTime;
     private String recordTime;
     private Double amount;
     private String bet;
@@ -29,11 +29,28 @@ public class Record implements Serializable {
     private Boolean dominate;
     private Double betAmount;
 
-    public Long getRecordId() {
+    public Record(){
+
+    }
+
+    public Record(String recordId, Long playerId, String recordTime,
+                  Double amount, String bet, Long scoreId,
+                  Boolean dominate, Double betAmount){
+        this.recordId = recordId;
+        this.playerId = playerId;
+        this.recordTime = recordTime;
+        this.amount = amount;
+        this.bet = bet;
+        this.scoreId = scoreId;
+        this.dominate = dominate;
+        this.betAmount = betAmount;
+    }
+
+    public String getRecordId() {
         return recordId;
     }
 
-    public void setRecordId(Long recordId) {
+    public void setRecordId(String recordId) {
         this.recordId = recordId;
     }
 
@@ -43,14 +60,6 @@ public class Record implements Serializable {
 
     public void setPlayerId(Long playerId) {
         this.playerId = playerId;
-    }
-
-    public String getBeginTime() {
-        return beginTime;
-    }
-
-    public void setBeginTime(String beginTime) {
-        this.beginTime = beginTime;
     }
 
     public String getRecordTime() {
@@ -100,5 +109,6 @@ public class Record implements Serializable {
     public void setBetAmount(Double betAmount) {
         this.betAmount = betAmount;
     }
+
 }
 

@@ -3,9 +3,12 @@ package com.morethan.game.interceptor;
 import com.morethan.game.common.Constant;
 import com.morethan.game.config.EnvConfig;
 import com.morethan.game.entity.Player;
+import com.morethan.game.entity.Record;
 import com.morethan.game.entity.Score;
 import com.morethan.game.service.PlayerService;
+import com.morethan.game.service.RecordService;
 import com.morethan.game.service.ScoreService;
+import com.morethan.game.utils.DateUtil;
 import com.morethan.game.utils.RedisUtil;
 import com.morethan.game.utils.TokenUtil;
 import org.apache.commons.lang.StringUtils;
@@ -31,6 +34,8 @@ public class ActionCheckInterceptor implements HandlerInterceptor {
     private PlayerService playerService;
     @Autowired
     private ScoreService scoreService;
+    @Autowired
+    private RecordService recordService;
 
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse httpServletResponse, Object handler) throws Exception {
@@ -43,13 +48,21 @@ public class ActionCheckInterceptor implements HandlerInterceptor {
         //从score表取到未下分的token,根据token反查到用户
         if (StringUtils.isNotEmpty(token)) {
             Score score = scoreService.whichOneByToken(token);
+            //score存在并且未下分
             if (score != null && score.getExitTime()== null && score.getExitAmount() == null) {
                 Player player = playerService.whichOne(score.getPlayerId());
                 if (null != player) {
                     req.setAttribute("player", player);
                     req.setAttribute("score", score);
                 }
+
+                Record record = recordService.selectById(score.getLastRecordId());
+                if(record != null){
+                    long timeDifference = DateUtil.difference(record.getRecordTime());
+                    req.setAttribute("timeDifference", timeDifference);
+                }
             }
+
         }
 
         return true;

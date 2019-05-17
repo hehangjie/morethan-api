@@ -193,11 +193,11 @@ public class SevenService {
         } else if (r == 4) {
             if (i == 21) {
                 lottery.setType("大火车");
-                r = RandomUtil.rollInt(0, 20);
+                r = RandomUtil.rollInt(3, 20);
                 lottery.setItems(new Integer[]{r, r - 1, r - 2, r - 3});
             } else {
                 lottery.setType("小火车");
-                r = RandomUtil.rollInt(0, 20);
+                r = RandomUtil.rollInt(2, 20);
                 lottery.setItems(new Integer[]{r, r - 1, r - 2});
             }
         }

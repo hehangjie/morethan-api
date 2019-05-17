@@ -14,6 +14,7 @@ import com.morethan.game.service.ScoreService;
 import com.morethan.game.service.game.SevenService;
 import com.morethan.game.utils.DateUtil;
 import com.morethan.game.utils.DominateUtil;
+import com.morethan.game.utils.RandomUtil;
 import com.morethan.game.utils.RedisUtil;
 import io.swagger.annotations.ApiOperation;
 import net.sf.json.JSONArray;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,11 +64,16 @@ public class RoundController {
     @UnAuthorization
     @PostMapping("new")
     @ApiOperation(value = "新游戏开局")
-    @Transactional
     public Result<Map> newRound(HttpServletRequest request, @RequestParam Integer gameId, @RequestParam String bets) {
         //[{"title":"apple","amount":0.8},{"title":"seven","amount":0.2}]
+        //[{"title":"big","amount":1.4}]
         Player player = (Player) request.getAttribute("player");
         Score score = (Score) request.getAttribute("score");
+        Long timeDifference = (Long) request.getAttribute("timeDifference");
+
+        if(timeDifference!=null && timeDifference < 5) {
+            return Result.fail("请求太频繁被拒绝");
+        }
 
         if (player == null) {
             return Result.fail("无效token");
@@ -75,7 +82,7 @@ public class RoundController {
         List<Bet> betList = new ArrayList<>();
         try {
             JSONArray array = JSONArray.fromObject(bets);
-            betList = JSONArray.toList(array,new Bet(), new JsonConfig());
+            betList = JSONArray.toList(array, new Bet(), new JsonConfig());
         } catch (Exception ex) {
             return Result.fail("bet对象转换错误");
         }
@@ -89,6 +96,35 @@ public class RoundController {
         }
 
         double totalBet = 0.0;
+        Map<String, Object> resultMap = new HashedMap();
+        boolean dominate = false;
+        Lottery lottery = new Lottery();
+        //开大小
+        if (betList.size() == 1 && (betList.get(0).getTitle().equals("big") || betList.get(0).getTitle().equals("small"))) {
+            Bet bet = betList.get(0);
+            if (bet.getTitle().equals("big") || bet.getTitle().equals("small")) {
+
+                Record lastRecord = recordService.selectById(score.getLastRecordId());
+                if(lastRecord == null || lastRecord.getAmount() < bet.getAmount()) {
+                    return Result.fail("无效投注");
+                }
+
+                lottery.setBetAmount(bet.getAmount());
+                if (bet.getAmount() > RandomUtil.rollDouble(0, 120)) {
+                    dominate = true;
+                    lottery.setTitle(bet.getTitle().equals("big") ? "small" : "big");
+                    lottery.setAmount(-bet.getAmount());
+                } else {
+                    lottery.setTitle(bet.getTitle());
+                    dominate = false;
+                    lottery.setAmount(bet.getAmount());
+                }
+            }
+
+            resultMap = recordService.record(lottery, player, bets, score, dominate);
+            return Result.ok(resultMap);
+        }
+
         for (Bet b : betList) {
             if (b.getAmount() < 0.1) {
                 return Result.fail("无效投注额:" + b.getAmount());
@@ -111,9 +147,6 @@ public class RoundController {
             scoreService.updateById(score);
         }
 
-        Map<String, Object> resultMap = new HashedMap();
-        boolean dominate = false;
-
         Double roundAmount = recordService.sumRecordByScore(score.getScoreId());
         if (roundAmount > 1000) {
             dominate = DominateUtil.threeQuartersDominate();
@@ -123,38 +156,11 @@ public class RoundController {
             dominate = DominateUtil.halfDominate();
         }
 
-        try {
-
-            //开奖
-            Lottery lottery = sevenService.loopDeal(dominate, betList);
-
-            //插入记录
-            Record record = new Record();
-            record.setPlayerId(player.getPlayerId());
-            record.setBeginTime(DateUtil.getCurrentTime());
-            record.setAmount(lottery.getAmount());
-            record.setBet(bets);
-            record.setScoreId(score.getScoreId());
-            record.setDominate(dominate);
-            record.setBetAmount(lottery.getBetAmount());
-            recordService.insert(record);
-            resultMap.put("lottery", lottery);
-
-            //刷新用户余额
-            player.setExperience(BigDecimal.valueOf(player.getExperience()).add(BigDecimal.valueOf(lottery.getAmount())).doubleValue());
-            boolean isUpdate = playerService.updateById(player);
-            if (!isUpdate) {
-                throw new Exception("乐观锁更新失败");
-            }
-            resultMap.put("experience", player.getExperience());
-            resultMap.put("dominate", dominate);
-
-        } catch (Exception e) {
-            logger.error(e.getStackTrace().toString());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-        }
-
+        //开奖
+        lottery = sevenService.loopDeal(dominate, betList);
+        resultMap = recordService.record(lottery, player, bets, score, dominate);
         return Result.ok(resultMap);
     }
+
 
 }

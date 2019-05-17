@@ -27,6 +27,7 @@ public class Score implements Serializable {
     private Double exitAmount;
     private String gameEntryTime;
     private String gameEntryToken;
+    private String lastRecordId;
 
     public Long getScoreId() {
         return scoreId;
@@ -91,6 +92,14 @@ public class Score implements Serializable {
 
     public void setGameEntryToken(String gameEntryToken) {
         this.gameEntryToken = gameEntryToken;
+    }
+
+    public String getLastRecordId() {
+        return lastRecordId;
+    }
+
+    public void setLastRecordId(String lastRecordId) {
+        this.lastRecordId = lastRecordId;
     }
 }
 

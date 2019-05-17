@@ -1,6 +1,8 @@
 package com.morethan.game.utils;
 
+import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -98,6 +100,15 @@ public class DateUtil {
     }
 
     /**
+     * 16进制时间戳，用于订单号
+     * （低于毫秒级的并发）
+     * @return
+     */
+    public static String getHexTimestamp(){
+        return Long.toHexString(getTimestamp());
+    }
+
+    /**
      * yyyy-MM-dd HH:mm:ss
      *
      * @return
@@ -141,6 +152,22 @@ public class DateUtil {
         String strMin = min < 10 ? "0" + min : min + "";
         String strSec = sec < 10 ? "0" + sec : sec + "";
         return String.format("%s:%s", strMin, strSec);
+    }
+
+    public static long difference(String strTime){
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        try {
+            Date date = sf.parse(strTime);
+            Date nowDate = new Date();
+            long diff = (nowDate.getTime() - date.getTime())/1000;
+            return diff;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+
     }
 
 
