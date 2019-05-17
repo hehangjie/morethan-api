@@ -3,6 +3,7 @@ package com.morethan.game.utils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -47,51 +48,36 @@ public class MD5Util {
      * @return
      */
     private static String sign(Map<String, String> treeMap) {
-        StringBuffer buff = new StringBuffer();
+        StringBuffer buff = new StringBuffer("secret=C005FB711C1E5BB359AF44CFB506F73B;");
         Iterator<String> it = treeMap.keySet().iterator();
         while (it.hasNext()) {
             String key = it.next();
-            if("sign".equals(key)) continue;
             buff.append(key + "=" + treeMap.get(key) + ";");
         }
         String md5 = MD5Util.encode(buff.toString());
         return md5;
     }
 
-    public static String sign(Map<String, String> treeMap,String secret) {
-    	StringBuilder sb = new StringBuilder();
-        Set<String> keys = treeMap.keySet();
-        for(String key : keys) {
-        	String v = treeMap.get(key);
-        	if(StringUtils.isNotBlank(v) && !"sign".equals(key) && !"key".equals(key)) {
-                try {
-					sb.append(key + "=" + URLEncoder.encode(v, "UTF-8") + "&");
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}
-            }
-        }
-        sb.append("key=" + secret);
-        String md5 = encode(sb.toString());
-        return md5.toUpperCase();
-    }
     /**
      * 签名验证
      *
      * @param treeMap
      * @return
      */
-    public static boolean checkSign(Map<String, String> treeMap) {
-        long currentTime = DateUtil.getTimestamp();
-        long requestTime = Long.parseLong(treeMap.get("timestamp")==null?"0":treeMap.get("timestamp"));
-        if (Math.abs(currentTime-requestTime)>TIMEOUT) {
-            return false;
-        }
+    public static boolean checkSign(Map<String, String> treeMap, String reqSign) {
         String sign = sign(treeMap);
-        if (sign.equals(treeMap.get("sign"))) {
+        if (sign.equals(reqSign)) {
             return true;
         }
         return false;
+    }
+
+    public static void main(String[] args){
+        Map<String, String> treeMap = new HashMap<>();
+        treeMap.put("title","hello");
+        treeMap.put("amount","40");
+        String sign = MD5Util.sign(treeMap);
+        System.out.println(sign);
     }
 
 }

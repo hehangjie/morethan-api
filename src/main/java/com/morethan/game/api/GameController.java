@@ -1,13 +1,10 @@
 package com.morethan.game.api;
 
-import com.morethan.game.authorization.UnAuthorization;
+import com.morethan.game.authorization.TokenCheck;
 import com.morethan.game.dto.Result;
 import com.morethan.game.entity.Player;
-import com.morethan.game.service.PlayerService;
 import com.morethan.game.service.ScoreService;
-import com.morethan.game.utils.RedisUtil;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,14 +31,11 @@ public class GameController {
     @Autowired
     private ScoreService scoreService;
 
-    @UnAuthorization
+    @TokenCheck
     @GetMapping("quit")
     @ApiOperation(value = "退出游戏")
     public Result<Map> quitGame(HttpServletRequest request) {
         Player player = (Player) request.getAttribute("player");
-        if(player == null) {
-            return Result.fail("无效token");
-        }
         boolean b = scoreService.exitScore(player);
         if(!b){
             return Result.fail();

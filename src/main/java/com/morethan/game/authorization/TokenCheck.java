@@ -6,10 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 在Controller的方法参数中使用此注解，要求方法签名成立
+ * 在Controller的方法上使用此注解，该方法在映射时会检查用户是否登录，未登录返回401错误
+ *
  * @author 张良
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SignCheck {
+public @interface TokenCheck {
 }

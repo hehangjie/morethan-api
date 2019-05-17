@@ -1,8 +1,7 @@
 package com.morethan.game.api;
 
-import com.morethan.game.authorization.UnAuthorization;
+import com.morethan.game.authorization.TokenCheck;
 import com.morethan.game.dto.Bet;
-import com.morethan.game.dto.RequestBet;
 import com.morethan.game.dto.Lottery;
 import com.morethan.game.dto.Result;
 import com.morethan.game.entity.Player;
@@ -23,14 +22,10 @@ import org.apache.commons.collections.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +56,7 @@ public class RoundController {
     @Autowired
     private ScoreService scoreService;
 
-    @UnAuthorization
+    @TokenCheck
     @PostMapping("new")
     @ApiOperation(value = "新游戏开局")
     public Result<Map> newRound(HttpServletRequest request, @RequestParam Integer gameId, @RequestParam String bets) {
@@ -69,14 +64,19 @@ public class RoundController {
         //[{"title":"big","amount":1.4}]
         Player player = (Player) request.getAttribute("player");
         Score score = (Score) request.getAttribute("score");
-        Long timeDifference = (Long) request.getAttribute("timeDifference");
 
-        if(timeDifference!=null && timeDifference < 5) {
-            return Result.fail("请求太频繁被拒绝");
+        //score已下分
+        if (score.getExitTime() != null || score.getExitAmount() != null) {
+            return Result.fail("Token失效");
         }
 
-        if (player == null) {
-            return Result.fail("无效token");
+        Record record = recordService.selectById(score.getLastRecordId());
+        if (record != null) {
+            long timeDifference = DateUtil.difference(record.getRecordTime());
+            //和上一局间隔低于5秒
+            if (timeDifference < 5) {
+                return Result.fail("请求太频繁");
+            }
         }
 
         List<Bet> betList = new ArrayList<>();
@@ -105,7 +105,7 @@ public class RoundController {
             if (bet.getTitle().equals("big") || bet.getTitle().equals("small")) {
 
                 Record lastRecord = recordService.selectById(score.getLastRecordId());
-                if(lastRecord == null || lastRecord.getAmount() < bet.getAmount()) {
+                if (lastRecord == null || lastRecord.getAmount() < bet.getAmount()) {
                     return Result.fail("无效投注");
                 }
 

@@ -1,8 +1,6 @@
 package com.morethan.game.config;
 
-import com.morethan.game.interceptor.ActionCheckInterceptor;
 import com.morethan.game.interceptor.AuthorizationInterceptor;
-import com.morethan.game.interceptor.SignCheckInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -21,21 +19,9 @@ public class ServletContextConfig implements WebMvcConfigurer {
         return new AuthorizationInterceptor();
     }
 
-    @Bean
-    public ActionCheckInterceptor actionCheckInterceptor() {
-        return new ActionCheckInterceptor();
-    }
-
-    @Bean
-    public SignCheckInterceptor signCheckInterceptor() {
-        return new SignCheckInterceptor();
-    }
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(actionCheckInterceptor()).addPathPatterns("/**");
         registry.addInterceptor(authorizationInterceptor()).addPathPatterns("/**");
-        registry.addInterceptor(signCheckInterceptor()).addPathPatterns("/**");
     }
 
     @Override

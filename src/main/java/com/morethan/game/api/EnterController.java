@@ -1,6 +1,5 @@
 package com.morethan.game.api;
 
-import com.morethan.game.authorization.UnAuthorization;
 import com.morethan.game.config.EnvConfig;
 import com.morethan.game.dto.Result;
 import com.morethan.game.entity.Player;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +38,6 @@ public class EnterController {
     @Autowired
     private PlayerService playerService;
 
-    @UnAuthorization
     @GetMapping("/")
     @ApiOperation(value = "默认页")
     public Result<Map> quitGame(HttpServletRequest request) {

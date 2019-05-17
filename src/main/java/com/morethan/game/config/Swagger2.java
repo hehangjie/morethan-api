@@ -40,17 +40,17 @@ public class Swagger2 {
         List<Parameter> pars = new ArrayList<Parameter>();
 
         ParameterBuilder tokenPar = new ParameterBuilder();
-        ParameterBuilder keyPar = new ParameterBuilder();
-        ParameterBuilder timePar = new ParameterBuilder();
-        ParameterBuilder signPar = new ParameterBuilder();
+//        ParameterBuilder keyPar = new ParameterBuilder();
+//        ParameterBuilder timePar = new ParameterBuilder();
+//        ParameterBuilder signPar = new ParameterBuilder();
         tokenPar.name("x-access-token").description("令牌").modelRef(new ModelRef("string")).parameterType("header").required(false).build();
-        keyPar.name("x-access-key").description("密钥Key").modelRef(new ModelRef("string")).parameterType("header").required(false).build();
-        timePar.name("x-access-timestamp").description("时间戳").modelRef(new ModelRef("string")).parameterType("header").required(false).build();
-        signPar.name("x-access-sign").description("签名").modelRef(new ModelRef("string")).parameterType("header").required(false).build();
+//        keyPar.name("x-access-key").description("密钥Key").modelRef(new ModelRef("string")).parameterType("header").required(false).build();
+//        timePar.name("x-access-timestamp").description("时间戳").modelRef(new ModelRef("string")).parameterType("header").required(false).build();
+//        signPar.name("x-access-sign").description("签名").modelRef(new ModelRef("string")).parameterType("header").required(false).build();
         pars.add(tokenPar.build());
-        pars.add(keyPar.build());
-        pars.add(timePar.build());
-        pars.add(signPar.build());
+//        pars.add(keyPar.build());
+//        pars.add(timePar.build());
+//        pars.add(signPar.build());
 
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
