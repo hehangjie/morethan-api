@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Select;
 
 public interface RecordMapper extends BaseMapper<Record> {
 
-    @Select("SELECT sum(amount) FROM t_record WHERE score_id = #{scoreId}")
+    @Select("SELECT IFNULL(sum(amount),0) FROM t_record WHERE score_id = #{scoreId}")
     Double sumScoreAmount(@Param("scoreId") Long scoreId);
 
     @Select("SELECT count(record_id) FROM t_record WHERE score_id = #{scoreId}")

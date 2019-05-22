@@ -105,7 +105,8 @@ public class RoundController {
             if (bet.getTitle().equals("big") || bet.getTitle().equals("small")) {
 
                 Record lastRecord = recordService.selectById(score.getLastRecordId());
-                if (lastRecord == null || lastRecord.getAmount() < bet.getAmount()) {
+                //TODO 有漏洞未处理，比大小的下一局是amount的两倍，但是普通投注是amount本身
+                if (lastRecord == null || lastRecord.getAmount() * 2 < bet.getAmount() ) {
                     return Result.fail("无效投注");
                 }
 
@@ -148,6 +149,7 @@ public class RoundController {
         }
 
         Double roundAmount = recordService.sumRecordByScore(score.getScoreId());
+
         if (roundAmount > 1000) {
             dominate = DominateUtil.threeQuartersDominate();
         } else if (roundAmount < -200) {
