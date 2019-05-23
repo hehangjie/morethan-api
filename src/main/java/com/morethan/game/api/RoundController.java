@@ -97,6 +97,7 @@ public class RoundController {
 
         double totalBet = 0.0;
         Map<String, Object> resultMap = new HashedMap();
+        double luckPool = RandomUtil.rollDouble(990000,1020000);
         boolean dominate = false;
         Lottery lottery = new Lottery();
         //开大小
@@ -105,24 +106,39 @@ public class RoundController {
             if (bet.getTitle().equals("big") || bet.getTitle().equals("small")) {
 
                 Record lastRecord = recordService.selectById(score.getLastRecordId());
-                //TODO 有漏洞未处理，比大小的下一局是amount的两倍，但是普通投注是amount本身
-                if (lastRecord == null || lastRecord.getAmount() * 2 < bet.getAmount() ) {
+                if (lastRecord == null || lastRecord.getAmount() + lastRecord.getBetAmount() < bet.getAmount() ) {
                     return Result.fail("无效投注");
                 }
 
                 lottery.setBetAmount(bet.getAmount());
-                if (bet.getAmount() > RandomUtil.rollDouble(0, 120)) {
-                    dominate = true;
-                    lottery.setTitle(bet.getTitle().equals("big") ? "small" : "big");
-                    lottery.setAmount(-bet.getAmount());
-                } else {
-                    lottery.setTitle(bet.getTitle());
-                    dominate = false;
-                    lottery.setAmount(bet.getAmount());
+                int r = RandomUtil.rollInt(1, 14);
+                lottery.setItems(new Integer[] {r});
+                if(r< 8) {//开小
+                    if(bet.getTitle().equals("big")){
+                        lottery.setTitle("small");
+                        lottery.setAmount(-bet.getAmount());
+                        lottery.setLotteryAmount(0.0);
+                    }else{
+                        lottery.setTitle(bet.getTitle());
+                        lottery.setAmount(bet.getAmount());
+                        lottery.setLotteryAmount(bet.getAmount()*2);
+                    }
+                }else{//开大
+                    if(bet.getTitle().equals("small")){
+                        lottery.setTitle("big");
+                        lottery.setAmount(-bet.getAmount());
+                        lottery.setLotteryAmount(0.0);
+                    }else{
+                        lottery.setTitle(bet.getTitle());
+                        lottery.setAmount(bet.getAmount());
+                        lottery.setLotteryAmount(bet.getAmount()*2);
+                    }
                 }
+
             }
 
             resultMap = recordService.record(lottery, player, bets, score, dominate);
+            resultMap.put("luckPool", luckPool + lottery.getAmount());
             return Result.ok(resultMap);
         }
 
@@ -148,19 +164,21 @@ public class RoundController {
             scoreService.updateById(score);
         }
 
-        Double roundAmount = recordService.sumRecordByScore(score.getScoreId());
-
-        if (roundAmount > 1000) {
-            dominate = DominateUtil.threeQuartersDominate();
-        } else if (roundAmount < -200) {
-            dominate = false;
-        } else {
-            dominate = DominateUtil.halfDominate();
-        }
+//        Double roundAmount = recordService.sumRecordByScore(score.getScoreId());
+//
+//        if (roundAmount > 1000) {
+//            dominate = DominateUtil.threeQuartersDominate();
+//        } else if (roundAmount < -200) {
+//            dominate = false;
+//        } else {
+//            dominate = DominateUtil.halfDominate();
+//        }
+        dominate = RandomUtil.rollInt(1,10)>7?true:false;
 
         //开奖
         lottery = sevenService.loopDeal(dominate, betList);
         resultMap = recordService.record(lottery, player, bets, score, dominate);
+        resultMap.put("luckPool", luckPool + lottery.getAmount());
         return Result.ok(resultMap);
     }
 

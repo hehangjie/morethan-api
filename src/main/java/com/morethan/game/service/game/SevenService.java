@@ -186,7 +186,7 @@ public class SevenService {
             lottery.setItems(new Integer[]{0, 6, 13});
         } else if (r == 2) {
             lottery.setType("大三元");
-            lottery.setItems(new Integer[]{8, 15, 20});
+            lottery.setItems(new Integer[]{7, 15, 20});
         } else if (r == 3) {
             lottery.setType("大四喜");
             lottery.setItems(new Integer[]{4, 10, 16, 22});

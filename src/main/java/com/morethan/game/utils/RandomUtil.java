@@ -15,9 +15,10 @@ public class RandomUtil {
 
     public static int rollInt(int min, int max) {
         if (min > max) return max;
+        //if(max- min < min) return min;
 
         Random r = new Random();
-        return r.nextInt(max+1) + min;
+        return r.nextInt(max+1-min) + min;
     }
 
 
